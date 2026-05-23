@@ -1,0 +1,52 @@
+REM ========================================================
+REM Título: Diagnóstico Rápido del Sistema
+REM Autor: Equipo Técnico NEXORC
+REM Descripción: Abre PowerShell, ejecuta un diagnóstico básico del
+REM sistema y guarda la salida en C:\temp\diagnostico_nexorc.txt
+REM ========================================================
+
+REM Dar tiempo al PC para reconocer el USB
+DELAY 2000
+
+REM Abrir el menú Ejecutar
+GUI r
+DELAY 500
+
+REM Escribir powershell y ejecutar como Administrador
+STRING powershell
+DELAY 200
+CTRL SHIFT ENTER
+DELAY 1500
+
+REM Aceptar el prompt de UAC (User Account Control) si aparece
+ALT y
+DELAY 1000
+
+REM Crear carpeta temporal si no existe
+STRING mkdir C:\temp -Force; cd C:\temp
+ENTER
+DELAY 500
+
+REM Ejecutar comandos de diagnóstico y guardar en archivo
+STRING echo "--- DIAGNÓSTICO NEXORC ---" > diagnostico_nexorc.txt
+ENTER
+STRING echo "--- INFO DEL SISTEMA ---" >> diagnostico_nexorc.txt
+ENTER
+STRING systeminfo | Select-String "OS Name|OS Version|System Manufacturer|System Model|Total Physical Memory" >> diagnostico_nexorc.txt
+ENTER
+STRING echo "--- DISCOS DUROS ---" >> diagnostico_nexorc.txt
+ENTER
+STRING Get-PhysicalDisk | Format-Table -AutoSize >> diagnostico_nexorc.txt
+ENTER
+STRING echo "--- ESTADO DE RED ---" >> diagnostico_nexorc.txt
+ENTER
+STRING Get-NetAdapter | Where-Object Status -eq 'Up' | Format-Table -AutoSize >> diagnostico_nexorc.txt
+ENTER
+
+REM Abrir el archivo generado para que el técnico lo vea
+STRING notepad C:\temp\diagnostico_nexorc.txt
+ENTER
+
+REM Opcional: Cerrar la ventana de PowerShell
+REM STRING exit
+REM ENTER

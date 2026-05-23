@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
+    <title>Administración | NEXORC RECOVERY CENTER</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+
+    <!-- Login de Seguridad -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h3 style="color: var(--accent)">ACCESO ADMINISTRATIVO NEXORC</h3>
+            <p style="font-size: 0.8rem; color: #666">Ingrese credenciales de ingeniería</p>
+            <input type="password" id="admin-pass" placeholder="CONTRASEÑA">
+            <button onclick="checkPass()">ENTRAR</button>
+            <p id="login-error" style="color: var(--danger); font-size: 0.8rem; margin-top: 1rem; display: none;">Acceso
+                Denegado</p>
+        </div>
+    </div>
+
+    <header>
+        <div style="color: var(--accent); font-weight: bold;">NEXORC ADMIN PANEL</div>
+        <div style="font-size: 0.8rem; color: #666; display: flex; align-items: center; gap: 1rem;">
+            <span>MODO: SUPERUSUARIO</span>
+            <button onclick="changeAdminPass()"
+                style="padding: 0.3rem 0.6rem; font-size: 0.7rem; width: auto; background: #222; color: #fff; border: 1px solid #444; border-radius: 3px; cursor: pointer;">CAMBIAR
+                CLAVE</button>
+        </div>
+    </header>
+
+    <div class="kpi-header">
+        <div class="kpi-item">
+            <span class="kpi-label">TICKETS ACTIVOS</span>
+            <span class="kpi-val" id="kpi-activos">0</span>
+        </div>
+        <div class="kpi-item">
+            <span class="kpi-label">TICKETS FINALIZADOS</span>
+            <span class="kpi-val" style="color:#888;" id="kpi-finalizados">0</span>
+        </div>
+        <div class="kpi-item">
+            <span class="kpi-label">♻️ BIOCHAKRA® RECYCLING</span>
+            <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                <span class="kpi-val" style="color:#88ff88;" id="kpi-biochakra">0</span>
+                <span style="font-size: 0.7rem; color: #444;">UNIDADES</span>
+            </div>
+            <div class="bio-meter-container">
+                <div id="bio-meter" class="bio-meter-fill"></div>
+            </div>
+            <button class="btn-kpi" onclick="addBiochakra()">+1 REGISTRO MANUAL</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- DASHBOARD (Columna Izquierda) -->
+        <div class="admin-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="margin: 0; border: none; padding: 0;">DASHBOARD</h2>
+                <button onclick="showCreateForm()" style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem;">+ NUEVO
+                    TICKET</button>
+            </div>
+
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-ticket" class="search-input" placeholder="Buscar por Nombre, RUT o ID..."
+                    oninput="handleSearch(this.value)">
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('activos')" id="tab-activos">ACTIVOS</button>
+                <button class="tab-btn" onclick="switchTab('historial')" id="tab-historial">HISTORIAL</button>
+            </div>
+
+            <div id="content-activos" class="tab-content active">
+                <div class="ticket-list" id="list-activos">
+                    <!-- Se llena con JS -->
+                </div>
+            </div>
+
+            <div id="content-historial" class="tab-content">
+                <div class="ticket-list" id="list-historial">
+                    <!-- Se llena con JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULARIO DINÁMICO (Columna Derecha) -->
+        <div class="admin-card" id="dynamic-form-area">
+
+            <!-- Vista 1: Crear Nuevo Ticket -->
+            <div id="form-create" style="display: none;">
+                <h2>GENERAR TICKET DE INGRESO</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Nombre del Cliente</label>
+                        <input type="text" id="new-name" placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono (Sin +)</label>
+                        <input type="text" id="new-phone" placeholder="56912345678">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Servicio / Urgencia</label>
+                    <select id="new-urgency"
+                        style="width: 100%; background: #111; color: #fff; padding: 0.8rem; border: 1px solid #333; margin-bottom: 1rem;">
+                        <option value="Mantenimiento Base">Mantenimiento Base (Azul)</option>
+                        <option value="Recuperación Lógica">Recuperación Lógica (Amarillo)</option>
+                        <option value="Falla Física/Forense">Falla Física/Forense (Rojo)</option>
+                        <option value="Generico">Otro (Gris)</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group"><label>CPU</label><input type="text" id="new-cpu" placeholder="Intel i5">
+                    </div>
+                    <div class="form-group"><label>RAM</label><input type="text" id="new-ram" placeholder="16GB"></div>
+                    <div class="form-group"><label>Disco</label><input type="text" id="new-disk"
+                            placeholder="SSD 500GB"></div>
+                </div>
+                <div class="form-group">
+                    <label>Síntomas / Motivo de Ingreso</label>
+                    <textarea id="new-symptoms" rows="3"
+                        style="width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 0.8rem; font-family: inherit;"
+                        placeholder="Ej: No enciende..."></textarea>
+                </div>
+                <button onclick="createTicket()">GENERAR TICKET</button>
+            </div>
+
+            <!-- Vista 2: Gestionar Ticket Seleccionado -->
+            <div id="form-manage" style="display: block;">
+                <h2 id="manage-header">SELECCIONE UN TICKET DEL DASHBOARD</h2>
+                <div id="manage-content" style="display: none;">
+                    <div
+                        style="background: rgba(0,0,0,0.5); padding: 1rem; border: 1px solid #333; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                        <p style="margin: 0 0 0.5rem 0; color: #aaa;"><strong style="color:#fff;">Hardware:</strong>
+                            <span id="manage-hw"></span>
+                        </p>
+                        <p style="margin: 0; color: #aaa;"><strong style="color:#fff;">Síntomas:</strong> <span
+                                id="manage-symp"></span></p>
+                    </div>
+
+                    <input type="hidden" id="manage-index">
+
+                    <div class="form-group">
+                        <label>Estado del Proceso</label>
+                        <select id="update-status"
+                            style="width: 100%; background: #111; color: #fff; padding: 0.8rem; border: 1px solid #333; margin-bottom: 1rem;">
+                            <option value="Recibido">Recibido</option>
+                            <option value="Diagnóstico">Diagnóstico</option>
+                            <option value="Clonación">Clonación</option>
+                            <option value="Rescate">Rescate</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Historial de Bitácora</label>
+                        <div id="bitacora-history"
+                            style="background: #111; border: 1px solid #333; color: #fff; padding: 0.8rem; font-family: inherit; margin-bottom: 1rem; max-height: 150px; overflow-y: auto; font-size: 0.85rem;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Agregar Nuevo Mensaje a la Bitácora</label>
+                        <textarea id="update-bitacora" rows="3"
+                            style="width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 0.8rem; font-family: inherit;"
+                            placeholder="Escriba el detalle del diagnóstico o avance..."></textarea>
+                    </div>
+                    <button onclick="updateTicketData()">GUARDAR Y ACTUALIZAR PORTAL</button>
+                    <button onclick="reprintTicket()" style="background: #444; color: #fff; margin-top: 1rem;">VER
+                        TICKET VISUAL</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Generador de Certificados -->
+        <div class="admin-card">
+            <h2>GENERADOR DE CERTIFICADOS</h2>
+            <div class="form-group">
+                <label>RUT Cliente / Empresa</label>
+                <input type="text" id="cert-rut" placeholder="12.345.678-9">
+            </div>
+            <div class="form-group">
+                <label>Número de Serie Disco</label>
+                <input type="text" id="cert-sn" placeholder="SN-NEX-00000">
+            </div>
+            <div class="form-group">
+                <label>Procedimiento</label>
+                <select id="cert-type"
+                    style="width: 100%; background: #111; color: #fff; padding: 0.8rem; border: 1px solid #333;">
+                    <option value="Borrado Seguro Nivel Militar">Borrado Seguro Nivel Militar</option>
+                    <option value="Recuperación Forense Avanzada">Recuperación Forense Avanzada</option>
+                    <option value="Auditoría de Integridad">Auditoría de Integridad</option>
+                </select>
+            </div>
+            <button onclick="generateCert()" style="background: #fff; color: #000; margin-top: 1rem;">GENERAR
+                DOCUMENTO</button>
+
+            <div id="cert-actions" style="display: none; margin-top: 1rem; gap: 1rem; display: flex;">
+                <button onclick="printCert()" style="background: #444; color: #fff;">IMPRIMIR</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Previsualización del Certificado -->
+    <div style="padding: 0 5% 5%;">
+        <div id="cert-preview">
+            <div class="cert-header">
+                <h1>NEXORC RECOVERY CENTER</h1>
+                <p>Ingeniería en Datos & Ciberseguridad</p>
+            </div>
+            <div id="cert-body">
+                <!-- Contenido dinámico -->
+            </div>
+            <div style="margin-top: 3rem; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div style="text-align: center; border-top: 1px solid #000; width: 200px; padding-top: 0.5rem;">
+                    Firma Técnico NEXORC
+                </div>
+                <div
+                    style="text-align: center; padding: 1rem; border: 2px solid #88ff88; color: #0a4a0a; font-weight: bold;">
+                    SELLO ÉTICO BIOCHAKRA®<br>
+                    <span style="font-size: 0.7rem;">Disposición Final Sostenible</span>
+                </div>
+            </div>
+            <p style="font-size: 0.7rem; color: #888; margin-top: 2rem;">
+                Este documento certifica que los procesos han sido realizados bajo protocolos internacionales de
+                seguridad y la normativa chilena vigente.
+            </p>
+        </div>
+    </div>
+
+    <!-- Ticket Visual Modal -->
+    <div id="ticket-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 2rem;">
+        <div
+            style="background: #fff; color: #000; padding: 3rem; max-width: 600px; width: 100%; font-family: 'JetBrains Mono', monospace; position: relative;">
+            <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 1rem; margin-bottom: 2rem;">
+                <h1 style="margin: 0; font-size: 1.5rem;">TICKET DE INGRESO</h1>
+                <p style="margin: 0;">NEXORC RECOVERY CENTER</p>
+            </div>
+            <div id="ticket-content" style="margin-bottom: 2rem; font-size: 0.9rem;">
+                <!-- Llenado dinámico -->
+            </div>
+            <div
+                style="text-align: center; border: 2px solid #000; padding: 1rem; font-size: 0.8rem; font-weight: bold; margin-bottom: 2rem;">
+                "Las piezas reemplazadas serán gestionadas bajo protocolos de economía circular por BIOCHAKRA®"
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center;" class="no-print">
+                <button onclick="window.print()" style="background: #444; color: #fff;">IMPRIMIR PDF</button>
+                <button id="btn-wa-ticket" style="background: #25D366; color: #fff;">ENVIAR WHATSAPP</button>
+                <button onclick="document.getElementById('ticket-modal').style.display='none'"
+                    style="background: #ff4444; color: #fff;">CERRAR</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        NEXORC RECOVERY CENTER INFORMATICA | Soporte: +56 9 7156 8682 | soporte@nexorc.cl | BIOCHAKRA® Ethics
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

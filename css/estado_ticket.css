@@ -1,0 +1,236 @@
+header {
+    padding: 1.5rem 5%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--secondary-color);
+    text-align: center;
+}
+
+h1 {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin: 0;
+}
+
+.summary-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 5%;
+    background: rgba(20, 20, 20, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 204, 0.1);
+    margin: 2rem 5%;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.summary-item {
+    padding: 1rem;
+    border-left: 2px solid rgba(255,255,255,0.05);
+}
+
+.summary-item strong {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+}
+
+.summary-item span {
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: 300;
+}
+
+.timeline {
+    padding: 2rem 5%;
+    margin: 2rem 5%;
+}
+
+.timeline ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    gap: 1rem;
+}
+
+.timeline ul::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #222;
+    z-index: 0;
+}
+
+.timeline li {
+    position: relative;
+    padding-top: 2.5rem;
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+.timeline li::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    background: #000;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.timeline li.active {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.timeline li.active::before {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px var(--accent-color);
+}
+
+.timeline li.completed {
+    color: #fff;
+}
+
+.timeline li.completed::before {
+    background: #333;
+    border-color: var(--accent-color);
+}
+
+.log-console {
+    background: #050505;
+    color: #00ff41;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 1.5rem;
+    margin: 2rem 5%;
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 255, 204, 0.1);
+    border-radius: 4px;
+    box-shadow: inset 0 0 20px #000;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.log-console div {
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0,255,0,0.05);
+}
+
+.console-prefix {
+    color: #008f11;
+    margin-right: 10px;
+}
+
+.recycling-banner {
+    background: linear-gradient(180deg, #050505 0%, #0a1a0a 100%);
+    color: #88ff88;
+    text-align: center;
+    padding: 1rem 5%;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(0,255,100,0.1);
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #888;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: var(--accent-color);
+}
+
+/* MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .summary-panel {
+        margin: 1rem 5%;
+        padding: 1.5rem;
+        grid-template-columns: 1fr;
+    }
+
+    .timeline ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2rem;
+        padding-left: 20px;
+    }
+
+    .timeline ul::before {
+        width: 2px;
+        height: 100%;
+        left: 29px;
+        top: 0;
+    }
+
+    .timeline li {
+        padding-top: 0;
+        padding-left: 3.5rem;
+        text-align: left;
+    }
+
+    .timeline li::before {
+        left: 0;
+        transform: none;
+        top: 0;
+    }
+
+    .log-console {
+        height: 400px;
+        font-size: 0.75rem;
+    }
+}
+
+/* PDF Report Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #print-report, #print-report * {
+        visibility: visible;
+    }
+    #print-report {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        color: black;
+        padding: 2rem;
+        font-family: Arial, sans-serif;
+    }
+    .no-print {
+        display: none !important;
+    }
+}

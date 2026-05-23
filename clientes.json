@@ -1,0 +1,9 @@
+[
+    {
+        "nombre": "Cliente Prueba",
+        "telefono": "56971568682",
+        "estado": "activo",
+        "estado_proceso": "Recibido",
+        "bitacora": ""
+    }
+]

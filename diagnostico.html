@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Diagnóstico Técnico | NEXORC</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/diagnostico.css">
+</head>
+
+<body>
+
+    <a href="index.html" class="back-link">← VOLVER AL PORTAL</a>
+
+    <header>
+        <h1>Ficha de Ingreso Técnico / Diagnóstico</h1>
+        <p style="font-size: 0.9rem; color: #666;">Complete los datos del hardware para iniciar el protocolo de
+            análisis.</p>
+    </header>
+
+    <div class="form-container">
+        <div id="btn-autodetect" style="text-align: right; margin-bottom: 1rem;">
+            <button type="button" onclick="autoDetectar()"
+                style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 0.5rem 1rem; cursor: pointer; font-family: var(--font-mono); font-size: 0.7rem;">[
+                AUTO-DETECTAR HARDWARE ]</button>
+        </div>
+        <form id="diagnostico-form">
+
+            <!-- Datos Personales -->
+            <div class="form-section">
+                <h2>1. Identificación del Cliente</h2>
+                <div class="grid">
+                    <div class="field">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="nombre" required placeholder="Nombre Apellido">
+                    </div>
+                    <div class="field">
+                        <label>RUT</label>
+                        <input type="text" id="rut" required placeholder="12.345.678-9">
+                    </div>
+                    <div class="field">
+                        <label>Teléfono de contacto</label>
+                        <input type="tel" id="telefono" required placeholder="56912345678">
+                    </div>
+                    <div class="field">
+                        <label>Correo electrónico</label>
+                        <input type="email" id="email" required placeholder="usuario@ejemplo.cl">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Especificaciones de Hardware -->
+            <div class="form-section" id="seccion-hardware">
+                <h2>2. Especificaciones del Hardware</h2>
+                <div class="grid">
+                    <div class="field">
+                        <label>Procesador</label>
+                        <input type="text" id="procesador" required placeholder="Ej: Intel i5 12th Gen / Ryzen 5">
+                    </div>
+                    <div class="field">
+                        <label>Memoria RAM</label>
+                        <select id="ram" required>
+                            <option value="">Seleccione...</option>
+                            <option value="4GB">4GB</option>
+                            <option value="8GB">8GB</option>
+                            <option value="16GB">16GB</option>
+                            <option value="32GB">32GB</option>
+                            <option value="64GB+">64GB o más</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Tipo de Almacenamiento</label>
+                        <select id="disco-tipo" required>
+                            <option value="SSD">SSD (Estado Sólido)</option>
+                            <option value="NVMe">NVMe (M.2 Ultra Rápido)</option>
+                            <option value="HDD">HDD (Disco Mecánico)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Capacidad</label>
+                        <input type="text" id="disco-cap" required placeholder="Ej: 500GB / 1TB">
+                    </div>
+                    <div class="field full-width">
+                        <label>Sistema Operativo y Versión</label>
+                        <input type="text" id="so" required
+                            placeholder="Ej: Windows 11 Pro / macOS Sonoma / Ubuntu 22.04">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auditoría de Redes (Solo Ciberseguridad) -->
+            <div class="form-section" id="seccion-ciberseguridad" style="display: none;">
+                <h2>2. Objetivos de Auditoría (Pentesting)</h2>
+                <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 1rem;">Seleccione los entornos o dispositivos que desea evaluar para detectar vulnerabilidades:</p>
+                <div class="grid" style="grid-template-columns: 1fr;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="ciber-wifi" value="Redes Wi-Fi">
+                        <label for="ciber-wifi" style="text-transform: none;">Redes Wi-Fi (Evaluación de cifrado y accesos no autorizados)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="ciber-camaras" value="Cámaras IP / CCTV">
+                        <label for="ciber-camaras" style="text-transform: none;">Cámaras IP / CCTV (Revisión de puertos abiertos y contraseñas débiles)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="ciber-web" value="Sitios Web / Servidores">
+                        <label for="ciber-web" style="text-transform: none;">Sitios Web o Servidores (Pruebas de intrusión web)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="ciber-lan" value="Red Local LAN">
+                        <label for="ciber-lan" style="text-transform: none;">Red Local LAN (Auditoría interna de dispositivos conectados)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporte de Síntomas -->
+            <div class="form-section">
+                <h2>3. Reporte de Síntomas y Fallas</h2>
+                <div class="field full-width">
+                    <label>Descripción detallada del problema</label>
+                    <textarea id="sintomas" required
+                        placeholder="Describa ruidos, errores, pantallazos o comportamientos inusuales..."></textarea>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" required>
+                <label for="terms" style="text-transform: none;">Acepto los términos de privacidad y manejo de datos
+                    según la normativa vigente en Chile.</label>
+            </div>
+
+            <button type="submit" class="btn-submit">Enviar Solicitud de Diagnóstico</button>
+
+        </form>
+    </div>
+
+    <footer>
+        <div style="margin-bottom: 1rem; color: #88ff88; font-weight: bold;">SELLO ÉTICO BIOCHAKRA®</div>
+        NEXORC RECOVERY CENTER INFORMATICA | Soporte: +56 9 7156 8682 | soporte@nexorc.cl<br>
+        Comprometidos con el reciclaje tecnológico sustentable.
+    </footer>
+
+    <div id="ticket-overlay">
+        <div class="ticket-box">
+            <h2 style="color: #fff; font-family: var(--font-mono); text-transform: uppercase;">Solicitud Generada con Éxito</h2>
+            <p>Guarde este número de ticket para ingresar al portal:</p>
+            <div id="big-ticket-number" class="ticket-number-huge">NEX-1000</div>
+            <p style="font-size: 0.9rem; margin-bottom: 2rem;">Será redirigido a WhatsApp en unos segundos...</p>
+            <button id="btn-wa-redirect" class="btn-submit" style="margin-top: 0;">ENVIAR POR WHATSAPP AHORA</button>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/diagnostico.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Trazabilidad Técnica - NEXORC</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/estado_ticket.css">
+</head>
+<body>
+    <header>
+        <div style="text-align: left; max-width: 1200px; margin: 0 auto;">
+            <a href="index.html" class="back-link">← VOLVER AL PORTAL PRINCIPAL</a>
+        </div>
+        <h1>Centro de Trazabilidad Técnica - NEXORC</h1>
+        <div id="ticketDisplay" style="margin-top: 1rem; font-family: var(--font-mono); font-size: 1.2rem; color: var(--accent-color); border: 1px dashed var(--accent-color); display: inline-block; padding: 0.5rem 1rem;">
+            TICKET: <span></span>
+        </div>
+    </header>
+    <section class="summary-panel" id="summaryPanel">
+        <div class="summary-item" id="clientName"><strong>Cliente:</strong> <span></span></div>
+        <div class="summary-item" id="hardwareInfo"><strong>Hardware en Laboratorio:</strong> <span></span></div>
+        <div class="summary-item" id="diagnostic"><strong>Diagnóstico Técnico:</strong> <span></span></div>
+    </section>
+    <section class="timeline" id="timelineSection">
+        <ul>
+            <li id="step1">Recepción y Ficha Técnica</li>
+            <li id="step2">Diagnóstico de Hardware/Software</li>
+            <li id="step3">Clonación Sector por Sector / Mitigación</li>
+            <li id="step4">Rescate de Información / Backup Seguro</li>
+            <li id="step5">Tratamiento Finalizado - Listo para Entrega</li>
+        </ul>
+    </section>
+    <section class="log-console" id="logConsole">
+        <!-- Logs will be appended here -->
+    </section>
+
+
+    <section class="recycling-banner no-print" id="recyclingBanner" style="display:none;">
+        En caso de daño físico irreversible, las piezas defectuosas serán procesadas para reciclaje bajo el estándar medioambiental BIOCHAKRA®
+    </section>
+
+    <!-- Botón para descargar PDF -->
+    <div style="text-align: center; margin-top: 2rem; display: none;" id="btn-download-pdf" class="no-print">
+        <button onclick="generateClientPDF()" style="background: var(--accent-color); color: #000; border: none; padding: 1rem 2rem; font-family: var(--font-mono); font-weight: bold; cursor: pointer; text-transform: uppercase; border-radius: 4px; box-shadow: 0 0 15px rgba(0,255,204,0.3); transition: transform 0.2s;">
+            📄 Descargar Reporte Técnico (PDF)
+        </button>
+    </div>
+
+    <!-- Contenedor oculto para impresión -->
+    <div id="print-report" style="display: none;">
+        <!-- Se llena con JS -->
+    </div>
+
+    <footer class="no-print" style="padding: 2rem 5%; text-align: center; border-top: 1px solid var(--secondary-color); margin-top: 2rem; color: #666; font-size: 0.8rem;">
+        NEXORC RECOVERY CENTER | Soporte: +56 9 7156 8682 | soporte@nexorc.cl | BIOCHAKRA® Ethics
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/estado_ticket.js"></script>
+</body>
+</html>
