@@ -210,6 +210,27 @@
             </div>
         </section>
 
+        <!-- MODAL PORTAL CLIENTES -->
+        <div id="portal-modal" class="portal-modal">
+            <div class="portal-modal-content">
+                <span class="close-portal" onclick="cerrarPortal()">&times;</span>
+                <h2 class="section-title" style="margin-bottom: 2rem;">Portal de Clientes</h2>
+                <div class="access-form"
+                    style="margin-top: 0; box-shadow: none; border: none; background: transparent; padding: 0;">
+                    <input type="text" id="ticket-id" class="access-input"
+                        placeholder="Ingrese su ID de Ticket (Ej: NEX-1001)" maxlength="15">
+                    <input type="tel" id="client-phone" class="access-input"
+                        placeholder="Teléfono registrado (Ej: 569...)" maxlength="15">
+                    <button class="btn-cta" onclick="validarAcceso()">Ingresar al Portal</button>
+                    <div id="access-message" class="access-message"></div>
+                </div>
+
+                <a href="diagnostico.html" class="btn-pulse"
+                    style="margin-top: 1.5rem; padding: 1rem 2rem; font-size: 0.9rem;">¿NUEVO CASO? SOLICITAR
+                    DIAGNÓSTICO</a>
+            </div>
+        </div>
+
         <!-- SECCIÓN COBERTURA MAPA -->
         <section class="coverage-section">
             <h2 class="section-title">Cobertura Regional</h2>
@@ -364,7 +385,15 @@
         </svg>
     </a>
 
-
+    <!-- Botón Flotante Portal Cliente -->
+    <a href="javascript:void(0)" class="portal-float" onclick="abrirPortal()">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round" class="portal-icon">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Ingreso Clientes</span>
+    </a>
 
     <script src="js/utils.js"></script>
     <script src="js/acceso.js"></script>

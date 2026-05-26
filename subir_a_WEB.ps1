@@ -1,5 +1,6 @@
 # =====================================================================
-# NEXORC RECOVERY CENTER - SISTEMA DE PUBLICACIÓN AUTOMATIZADA
+# NEXORC RECOVERY CENTER - SISTEMA DE PUBLICACIÓN AUTOMATIZADA .\subir_a_WEB.ps1
+
 # Script: subir a WEB (subir_a_WEB.ps1)
 # =====================================================================
 
