@@ -2,8 +2,10 @@
     --bg-color: #000000;
     --text-color: #e0e0e0;
     --accent-color: #00ffcc;
+    --accent: var(--accent-color);
     /* Verde ciberseguridad */
     --secondary-color: #1a1a1a;
+    --secondary: var(--secondary-color);
     --font-main: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --transition: all 0.3s ease;
