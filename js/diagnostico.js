@@ -60,7 +60,7 @@ function autoDetectar() {
 
 const diagnosticForm = document.getElementById('diagnostico-form');
 if (diagnosticForm) {
-    diagnosticForm.addEventListener('submit', function (e) {
+    diagnosticForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         // Validar teléfono (Debe empezar con 569 y tener 11 dígitos)
@@ -71,8 +71,19 @@ if (diagnosticForm) {
             return;
         }
 
-        // Generar ID de ticket
-        const tickets = JSON.parse(localStorage.getItem('nexorc_tickets') || '[]');
+        // Generar ID de ticket cargando los tickets desde la base de datos remota
+        let tickets = [];
+        try {
+            const response = await fetch('/api/tickets');
+            if (response.ok) {
+                tickets = await response.json();
+            } else {
+                tickets = JSON.parse(localStorage.getItem('nexorc_tickets') || '[]');
+            }
+        } catch (err) {
+            tickets = JSON.parse(localStorage.getItem('nexorc_tickets') || '[]');
+        }
+
         let maxId = 1000;
         tickets.forEach(t => {
             if(t.id_ticket) {
@@ -134,7 +145,18 @@ if (diagnosticForm) {
             ]
         };
 
-        // 1. Guardar en nexorc_tickets
+        // 1. Guardar en la base de datos remota
+        try {
+            await fetch('/api/tickets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        } catch (err) {
+            console.error('Error al guardar en base de datos remota:', err);
+        }
+
+        // Guardar también localmente para redundancia
         tickets.push(data);
         localStorage.setItem('nexorc_tickets', JSON.stringify(tickets));
 

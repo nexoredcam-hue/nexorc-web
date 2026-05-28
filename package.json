@@ -1,0 +1,10 @@
+{
+  "name": "nexorc-web",
+  "version": "1.0.0",
+  "description": "Sistema NEXORC con Base de Datos Segura",
+  "main": "api/tickets.js",
+  "type": "module",
+  "dependencies": {
+    "@vercel/postgres": "^0.8.0"
+  }
+}

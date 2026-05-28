@@ -20,9 +20,22 @@ async function validarAcceso() {
         showMessage('Validando credenciales en servidor seguro...', 'info');
         NEXORC.showToast('Validando credenciales...', 'info', 2000);
 
-        // Leer base de datos local (Tickets)
-        const storedTickets = localStorage.getItem('nexorc_tickets');
-        const tickets = storedTickets ? JSON.parse(storedTickets) : [];
+        // Leer base de datos en la web (Tickets)
+        let tickets = [];
+        try {
+            const response = await fetch('/api/tickets');
+            if (response.ok) {
+                tickets = await response.json();
+            } else {
+                console.warn('Fallo al cargar tickets del servidor. Usando local...');
+                const storedTickets = localStorage.getItem('nexorc_tickets');
+                tickets = storedTickets ? JSON.parse(storedTickets) : [];
+            }
+        } catch (e) {
+            console.error('Error de conexión con la base de datos remota. Usando local...', e);
+            const storedTickets = localStorage.getItem('nexorc_tickets');
+            tickets = storedTickets ? JSON.parse(storedTickets) : [];
+        }
         
         // Función para limpiar números de teléfono (deja solo dígitos)
         const cleanPhone = (phone) => String(phone || '').replace(/\D/g, '');

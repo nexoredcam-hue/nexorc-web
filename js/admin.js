@@ -203,45 +203,29 @@ function showCreateForm() {
     document.querySelectorAll('.ticket-card').forEach(c => c.classList.remove('selected'));
 }
 
-function initDB() {
-    if (!localStorage.getItem('nexorc_biochakra_count')) {
-        localStorage.setItem('nexorc_biochakra_count', '0');
+async function initDB() {
+    // Sincronizar Biochakra de la web
+    try {
+        const response = await fetch('/api/kpis?key=biochakra_count');
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('nexorc_biochakra_count', data.value.toString());
+        }
+    } catch (e) {
+        console.error('Error sincronizando Biochakra count:', e);
     }
     
-    // Migración de datos antiguos si existen
-    const oldClients = localStorage.getItem('nexorc_clients');
-    if (oldClients && !localStorage.getItem('nexorc_tickets')) {
-        let parsedOld = JSON.parse(oldClients);
-        let migratedTickets = parsedOld.map((c, index) => {
-            return {
-                id_ticket: `NEX-${1001 + index}`,
-                nombre: c.nombre,
-                telefono: c.telefono,
-                urgencia: "Generico",
-                estado_proceso: c.estado_proceso,
-                bitacora: Array.isArray(c.bitacora) ? c.bitacora : [{ fecha: new Date().toLocaleString(), mensaje: c.bitacora || "Migrado de sistema antiguo." }],
-                hardware: { procesador: "No especificado", ram: "No especificada", disco: "No especificado" },
-                sintomas: "No especificados"
-            };
-        });
-        localStorage.setItem('nexorc_tickets', JSON.stringify(migratedTickets));
-    } else if (!localStorage.getItem('nexorc_tickets')) {
-        const defaultTickets = [
-            {
-                "id_ticket": "NEX-1001",
-                "nombre": "Cliente Prueba",
-                "telefono": "56971568682",
-                "urgencia": "Mantenimiento Base",
-                "hardware": { "procesador": "Intel i5", "ram": "16GB", "disco": "SSD 500GB" },
-                "sintomas": "Evaluación general del sistema y limpieza.",
-                "estado_proceso": "Recibido",
-                "bitacora": [
-                    { fecha: new Date().toLocaleString(), mensaje: "Ingreso de dispositivo al laboratorio. Pendiente de evaluación técnica." }
-                ]
-            }
-        ];
-        localStorage.setItem('nexorc_tickets', JSON.stringify(defaultTickets));
+    // Obtener y sincronizar tickets de la web
+    try {
+        const response = await fetch('/api/tickets');
+        if (response.ok) {
+            const tickets = await response.json();
+            localStorage.setItem('nexorc_tickets', JSON.stringify(tickets));
+        }
+    } catch (e) {
+        console.error('Error sincronizando tickets:', e);
     }
+
     updateCounters();
     renderTickets();
 }
@@ -269,9 +253,24 @@ function updateCounters() {
     }
 }
 
-function addBiochakra() {
-    let current = parseInt(localStorage.getItem('nexorc_biochakra_count') || '0');
-    localStorage.setItem('nexorc_biochakra_count', (current + 1).toString());
+async function addBiochakra() {
+    try {
+        const response = await fetch('/api/kpis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: 'biochakra_count', action: 'increment' })
+        });
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('nexorc_biochakra_count', data.value.toString());
+        } else {
+            let current = parseInt(localStorage.getItem('nexorc_biochakra_count') || '0');
+            localStorage.setItem('nexorc_biochakra_count', (current + 1).toString());
+        }
+    } catch (e) {
+        let current = parseInt(localStorage.getItem('nexorc_biochakra_count') || '0');
+        localStorage.setItem('nexorc_biochakra_count', (current + 1).toString());
+    }
     updateCounters();
     NEXORC.showToast("♻️ Registro Biochakra actualizado.", "success");
 }
@@ -408,7 +407,7 @@ function updateBitacoraHistory(bitacora) {
     }, 100);
 }
 
-function updateTicketData() {
+async function updateTicketData() {
     const index = document.getElementById('manage-index').value;
     if (index === "") return;
 
@@ -424,16 +423,37 @@ function updateTicketData() {
         t.bitacora.push({ fecha: new Date().toLocaleString(), mensaje: newMsg });
     }
 
+    // Guardar en la base de datos remota
+    try {
+        await fetch('/api/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(t)
+        });
+    } catch (e) {
+        console.error('Error al actualizar ticket en servidor:', e);
+    }
+
     localStorage.setItem('nexorc_tickets', JSON.stringify(tickets));
     NEXORC.showToast(`Ticket ${t.id_ticket} actualizado con éxito.`, "success");
     renderTickets();
     loadTicketToForm(index);
 }
 
-function deleteTicket(index) {
+async function deleteTicket(index) {
     if (!confirm("¿Está seguro de eliminar este ticket permanentemente?")) return;
     
     const tickets = JSON.parse(localStorage.getItem('nexorc_tickets'));
+    const t = tickets[index];
+    
+    try {
+        await fetch(`/api/tickets?id_ticket=${t.id_ticket}`, {
+            method: 'DELETE'
+        });
+    } catch (e) {
+        console.error('Error al eliminar ticket en servidor:', e);
+    }
+
     tickets.splice(index, 1);
     localStorage.setItem('nexorc_tickets', JSON.stringify(tickets));
     
@@ -442,7 +462,7 @@ function deleteTicket(index) {
     document.getElementById('manage-content').style.display = 'none';
 }
 
-function createTicket() {
+async function createTicket() {
     const name = document.getElementById('new-name').value.trim();
     const phone = document.getElementById('new-phone').value.trim();
     const urgency = document.getElementById('new-urgency').value;
@@ -463,8 +483,19 @@ function createTicket() {
         return;
     }
 
-    const tickets = JSON.parse(localStorage.getItem('nexorc_tickets')) || [];
-    
+    // Obtener tickets de la base de datos remota para el ID correlativo correcto
+    let tickets = [];
+    try {
+        const response = await fetch('/api/tickets');
+        if (response.ok) {
+            tickets = await response.json();
+        } else {
+            tickets = JSON.parse(localStorage.getItem('nexorc_tickets') || '[]');
+        }
+    } catch (e) {
+        tickets = JSON.parse(localStorage.getItem('nexorc_tickets') || '[]');
+    }
+
     // Generar nuevo ID
     let maxId = 1000;
     tickets.forEach(t => {
@@ -487,6 +518,17 @@ function createTicket() {
         estado_proceso: "Recibido",
         bitacora: [{ fecha: new Date().toLocaleString(), mensaje: "Ticket generado en laboratorio." }]
     };
+
+    // Guardar en la base de datos remota
+    try {
+        await fetch('/api/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newTicket)
+        });
+    } catch (e) {
+        console.error('Error al crear ticket en servidor:', e);
+    }
 
     tickets.push(newTicket);
     localStorage.setItem('nexorc_tickets', JSON.stringify(tickets));
