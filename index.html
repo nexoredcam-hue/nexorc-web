@@ -395,8 +395,175 @@
         <span>Ingreso Clientes</span>
     </a>
 
+    <!-- Botón Flotante Correo Institucional -->
+    <button class="email-float" id="btn-req-email" onclick="abrirModalRequerimiento()" aria-label="Enviar requerimiento por correo institucional">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        <span class="email-float-tooltip">Enviar Requerimiento</span>
+    </button>
+
+    <!-- MODAL REQUERIMIENTO POR CORREO -->
+    <div id="req-modal" class="req-modal" role="dialog" aria-modal="true" aria-labelledby="req-modal-title">
+        <div class="req-modal-content">
+            <button class="close-req-modal" onclick="cerrarModalRequerimiento()" aria-label="Cerrar">&times;</button>
+
+            <!-- Badge institucional -->
+            <div class="req-institutional-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                </svg>
+                Correo Corporativo Verificado
+            </div>
+
+            <!-- Sección formulario -->
+            <div id="req-form-section">
+                <!-- Cabecera -->
+                <div class="req-modal-header">
+                    <div class="req-modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <h3 id="req-modal-title">Enviar Requerimiento</h3>
+                    <p>Complete el formulario y lo recibiremos directamente en nuestro buzón corporativo.</p>
+                </div>
+
+                <!-- Aviso de correo seguro -->
+                <div class="req-secure-notice">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    <div class="req-secure-notice-text">
+                        <strong>Correo Institucional &amp; Seguro</strong>
+                        <span>Su mensaje se envía a <span class="req-secure-notice-email">soporte@nexorc.cl</span>, dirección propia del dominio
+                        <strong style="color:#a0aaff;">nexorc.cl</strong>. No usamos servicios de correo genéricos
+                        (Gmail, Hotmail u otros). Su privacidad está protegida.</span>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <form class="req-form" id="req-form" onsubmit="enviarRequerimiento(event)" novalidate>
+                    <div class="req-field">
+                        <label for="req-nombre">Nombre completo *</label>
+                        <input type="text" id="req-nombre" class="req-input" placeholder="Ej: Juan Pérez" required>
+                    </div>
+                    <div class="req-field">
+                        <label for="req-contacto">Teléfono o Email de respuesta *</label>
+                        <input type="text" id="req-contacto" class="req-input" placeholder="Ej: +56 9 1234 5678 o correo@dominio.cl" required>
+                    </div>
+                    <div class="req-field">
+                        <label for="req-tipo">Tipo de requerimiento *</label>
+                        <select id="req-tipo" class="req-select" required>
+                            <option value="" disabled selected>— Seleccione una categoría —</option>
+                            <option value="Recuperación de Datos Forense">Recuperación de Datos Forense</option>
+                            <option value="Auditoría y Seguridad de Redes">Auditoría y Seguridad de Redes</option>
+                            <option value="Certificación Legal de Borrado">Certificación Legal de Borrado</option>
+                            <option value="Soporte Técnico y Optimización">Soporte Técnico y Optimización</option>
+                            <option value="Manyi App / Software">Manyi App / Software</option>
+                            <option value="Consulta General">Consulta General</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="req-field">
+                        <label for="req-descripcion">Descripción del requerimiento *</label>
+                        <textarea id="req-descripcion" class="req-textarea" rows="4"
+                            placeholder="Describa brevemente su necesidad, dispositivo afectado, urgencia, etc." required></textarea>
+                    </div>
+                    <button type="submit" class="req-submit-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        Enviar a soporte@nexorc.cl
+                    </button>
+                </form>
+            </div>
+
+            <!-- Estado éxito (oculto por defecto) -->
+            <div class="req-success" id="req-success">
+                <div class="req-success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h4>¡Requerimiento Enviado!</h4>
+                <p>Su cliente de correo se abrirá con el mensaje listo. Verifique que fue enviado correctamente a:</p>
+                <div class="req-success-email">soporte@nexorc.cl</div>
+                <p style="font-size:0.78rem; color:#555; margin-top:0.5rem;">Si no se abrió automáticamente,
+                    escríbanos directamente a esa dirección desde su correo habitual.</p>
+            </div>
+        </div>
+    </div>
+
     <script src="js/utils.js"></script>
     <script src="js/acceso.js"></script>
+
+    <!-- JS Modal Requerimiento -->
+    <script>
+        function abrirModalRequerimiento() {
+            document.getElementById('req-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            // Asegurar que el formulario esté visible y el éxito oculto
+            document.getElementById('req-form-section').style.display = '';
+            document.getElementById('req-success').classList.remove('active');
+        }
+
+        function cerrarModalRequerimiento() {
+            document.getElementById('req-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function enviarRequerimiento(e) {
+            e.preventDefault();
+            const nombre      = document.getElementById('req-nombre').value.trim();
+            const contacto    = document.getElementById('req-contacto').value.trim();
+            const tipo        = document.getElementById('req-tipo').value;
+            const descripcion = document.getElementById('req-descripcion').value.trim();
+
+            if (!nombre || !contacto || !tipo || !descripcion) {
+                alert('Por favor complete todos los campos requeridos.');
+                return;
+            }
+
+            const asunto = encodeURIComponent('[NEXORC] Requerimiento: ' + tipo);
+            const cuerpo = encodeURIComponent(
+                'Hola equipo NEXORC,\n\n' +
+                'Nombre: ' + nombre + '\n' +
+                'Contacto: ' + contacto + '\n' +
+                'Tipo de requerimiento: ' + tipo + '\n\n' +
+                'Descripción:\n' + descripcion + '\n\n' +
+                '---\nEnviado desde nexorc.cl'
+            );
+
+            // Abrir cliente de correo con datos prellenados
+            window.location.href = 'mailto:soporte@nexorc.cl?subject=' + asunto + '&body=' + cuerpo;
+
+            // Mostrar estado de éxito
+            document.getElementById('req-form-section').style.display = 'none';
+            document.getElementById('req-success').classList.add('active');
+        }
+
+        // Cerrar modal al hacer click en el fondo
+        document.getElementById('req-modal').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalRequerimiento();
+        });
+
+        // Cerrar con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModalRequerimiento();
+        });
+    </script>
 </body>
 
 </html>
